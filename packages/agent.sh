@@ -1,0 +1,1 @@
+uvicorn ai-agent.app:app --reload --port 5002

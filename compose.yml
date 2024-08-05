@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  cb-assistant:
+    container_name: cb-assistant
+    build:
+      context: ./packages/ai-agent/
+      dockerfile: Docker.assistant
+    volumes:
+    - ./:/app
+    environment:
+      - BANK_API=http://localhost:5001
+    command: uvicorn ai-agent.app:app --reload --port 5002
+    ports:
+      - 5002:5002
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - cbnet
+
+  cb-bank:
+    container_name: cb-bank
+    build:
+      context: ./packages/banking/
+      dockerfile: Docker.banking
+    volumes:
+    - ./:/app
+    command: uvicorn banking.app:app --reload --port 5001
+    ports:
+      - 5001:5002
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - cbnet
+
+  cb-telegram:
+    container_name: cb-telegram
+    build:
+      context: ./packages/bot_tele/
+      dockerfile: Docker.telegram
+    volumes:
+    - ./:/app
+    environment:
+      - ASSISTANT_API=http://localhost:5002
+      - BANK_API=http://localhost:5001
+    command: python -m bot_tele
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - cbnet
+
+  # cb-whatsapp:
+  #   container_name: cb-whatsapp
+  #   build:
+  #     context: ./packages/bot_wha/
+  #     dockerfile: Docker.whatsapp
+  #   volumes:
+  #   - ./:/app/bot_wha
+  #   environment:
+  #     - ASSISTANT_API=http://localhost:5002
+  #     - BANK_API=http://localhost:5001
+  #   command: /bin/sh -c "cd bot_wha && npm run start"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+  #   networks:
+  #     - cbnet
+
+networks:
+  cbnet:
+    driver: bridge
+
+

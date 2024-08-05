@@ -1,0 +1,20 @@
+{
+  "name": "@beak/bank-wha-bot",
+  "version": "1.0.0",
+  "description": "Beak bank's whatsapp bot using baileys",
+  "main": "app.ts",
+  "author": "Aurthur Musendame",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node app.ts"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.5",
+    "add": "^2.0.6",
+    "axios": "^1.7.2",
+    "qrcode-terminal": "^0.12.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3",
+    "yarn": "^1.22.22"
+  }
+}

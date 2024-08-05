@@ -1,0 +1,11 @@
+FROM node:18
+
+WORKDIR /home/node/app
+
+RUN mkdir bot_wha
+
+COPY package*.json ./bot_wha
+
+RUN cd bot_wha && npm i
+
+COPY . ./bot_wha

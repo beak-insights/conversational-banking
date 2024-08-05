@@ -1,0 +1,1 @@
+uvicorn banking.app:app --reload --port 5001
