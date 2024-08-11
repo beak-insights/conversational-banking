@@ -10,5 +10,5 @@ RUN pip install -r ./ai-agent/requirements.txt
 
 COPY . ./ai-agent
 
-EXPOSE 5002
+EXPOSE 8000
 

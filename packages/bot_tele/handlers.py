@@ -1,4 +1,5 @@
 from typing import NoReturn
+import logging
 
 from chatgpt_md_converter import telegram_format
 from telegram import Update
@@ -9,19 +10,16 @@ from .session import (
     get_session, 
     update_session
 )
-from .service import (
-    bank_post,
-    assistant_post
-)
+from .service import assistant_post, bank_post, logger
 
-
+logger = logging.getLogger(__name__)
 
 async def commdand_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> NoReturn:
     """Displays info on how to use the bot."""
     await context.bot.send_chat_action(update.message.chat.id, "typing")
     resp = await assistant_post("/ask", update.message.from_user, "What kind of questions can you help me with? Help me understand how to use you. \
                                 Give examples of all possible question i can ask")
-    as_html = telegram_format(resp)
+    as_html = telegram_format(resp["content"])
     await update.message.reply_text(as_html, parse_mode='HTML')
 
 
@@ -32,7 +30,7 @@ async def command_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await init_session(update.message.from_user)
     await context.bot.send_chat_action(update.message.chat.id, "typing")
     resp = await assistant_post("/ask", update.message.from_user, "Hie, who are and how can you be help me?")    
-    as_html = telegram_format(resp)
+    as_html = telegram_format(resp["content"])
     await update.message.reply_text(as_html, parse_mode='HTML')
 
 
@@ -43,7 +41,8 @@ async def comand_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # try:
     await context.bot.send_chat_action(update.effective_chat.id, "typing")
     resp = await assistant_post("/ask", update.message.from_user, update.message.text)
-    as_html = telegram_format(resp)
+    logger.info(f"Response from assistant: {resp}")
+    as_html = telegram_format(resp["content"])
     await update.message.reply_text(as_html, parse_mode='HTML')
     # except Exception as e:
     #     # error or handle it somehow
@@ -58,5 +57,5 @@ async def commdand_seed(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await update.message.reply_text("Seeding your starter banking data...")
     await context.bot.send_chat_action(update.message.chat.id, "typing")
     resp = await bank_post("/seed", {"user_id": str(user.id), "full_name": user.full_name})
-    await update_session(update.effective_user, user_context=resp["context"])
+    await update_session(update.effective_user, user_context=resp["content"])
     await update.message.reply_text("Bank Accounts initialized successfully.")
