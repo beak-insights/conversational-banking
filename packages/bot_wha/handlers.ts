@@ -1,4 +1,4 @@
-import { askAssistant, bankPost } from './utils'
+import { askAssistant, bankPost, getSender } from './utils'
 import { update_session } from './session'
 import { TUser } from "./types"
 
@@ -16,8 +16,8 @@ export const handleMessage = async (sockt: any, m: any): Promise<void> => {
         } else if(question === '/start') {
             question = 'Hie, who are and how can you be help me?'
         } else if(question === '/seed') {
-            const context = await bankPost('/seed', _sender(m))
-            update_session(_sender(m), context)
+            const context = await bankPost('/seed', getSender(m))
+            update_session(getSender(m), context)
             question = "Hie, what kind of services are available for me to use based on my details?"
         } else {
             await sockt.sendMessage(m.messages[0].key.remoteJid!, { text: "Unknown command. Please try one of /help, /seed, /start" })
@@ -25,11 +25,8 @@ export const handleMessage = async (sockt: any, m: any): Promise<void> => {
         }
     }
 
-    const response = await askAssistant(_sender(m), question)
+    const response = await askAssistant(getSender(m), question)
     await sockt.sendMessage(m.messages[0].key.remoteJid!, { text: response })
 }
 
-const _sender = (message: any): TUser => ({
-    user_id: message.messages[0].key.remoteJid,
-    full_name: message.messages[0].pushName,
-})
+
