@@ -51,22 +51,22 @@ services:
     networks:
       - cbnet
 
-  cb-whatsapp:
-    container_name: cb-whatsapp
-    build:
-      context: ./packages/bot_wha/
-      dockerfile: Docker.whatsapp
-    volumes:
-      - ./packages/bot_wha:/app/bot_wha
-      - ./packages/bot_wha/auth_beak_bot:/app/bot_wha/auth_beak_bot
-    environment:
-      - ASSISTANT_API=http://cb-assistant:8000
-      - BANK_API=http://cb-bank:8000
-    command: /bin/sh -c "cd bot_wha && npm run start"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks:
-      - cbnet
+  # cb-whatsapp:
+  #   container_name: cb-whatsapp
+  #   build:
+  #     context: ./packages/bot_wha/
+  #     dockerfile: Docker.whatsapp
+  #   volumes:
+  #     - ./packages/bot_wha:/app/bot_wha
+  #     - ./packages/bot_wha/auth_beak_bot:/app/bot_wha/auth_beak_bot
+  #   environment:
+  #     - ASSISTANT_API=http://cb-assistant:8000
+  #     - BANK_API=http://cb-bank:8000
+  #   command: /bin/sh -c "cd bot_wha && npm run start"
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   networks:
+  #     - cbnet
 
 networks:
   cbnet:
