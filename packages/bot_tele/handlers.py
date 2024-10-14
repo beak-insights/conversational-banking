@@ -10,7 +10,7 @@ from .session import (
     get_session, 
     update_session
 )
-from .service import assistant_post, bank_post, logger
+from .service import assistant_post, logger
 
 logger = logging.getLogger(__name__)
 
@@ -49,13 +49,3 @@ async def comand_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     #     await update.message.reply_text(f"Sorry An error occured >> {str(e)}")
     #     # reset the agent
     #     session["agent"].init()
-
-
-async def commdand_seed(update: Update, context: ContextTypes.DEFAULT_TYPE) -> NoReturn:
-    """Seed starter data for a user."""
-    user = update.message.from_user
-    await update.message.reply_text("Seeding your starter banking data...")
-    await context.bot.send_chat_action(update.message.chat.id, "typing")
-    resp = await bank_post("/seed", {"user_id": str(user.id), "full_name": user.full_name})
-    await update_session(update.effective_user, user_context=resp["content"])
-    await update.message.reply_text("Bank Accounts initialized successfully.")

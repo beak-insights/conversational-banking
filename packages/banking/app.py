@@ -20,6 +20,18 @@ app = FastAPI()
 
 class BaseQuery(BaseModel):
     user_id: str
+    
+    
+class ContextQuery(BaseQuery):
+    ...
+
+
+@app.post("/context")
+def user_context(data: ContextQuery):
+    print(f"Requesting context for {data.user_id}")
+    ctx = seed_for_user(data.user_id)
+    print(f"Context for {data.user_id} is {ctx}")   
+    return {"content":  ctx}
 
 
 class SeedRequest(BaseQuery):
@@ -27,9 +39,8 @@ class SeedRequest(BaseQuery):
 
 
 @app.post("/seed")
-def ask_assistant(data: SeedRequest):
-    respo = seed_for_user(data.user_id, data.full_name)
-    return {"content": respo }
+def seed_user(data: SeedRequest):
+    return {"content": seed_for_user(data.user_id, data.full_name) }
 
 
 class BalanceRequest(BaseQuery):
@@ -41,6 +52,20 @@ async def balance(data: BalanceRequest):
     beak_bank: BeakBank = BeakBank().contextualise(data.user_id)
     return {"content": beak_bank.get_account_balance(data.account_type)}
 
+
+class AccountsRequest(BaseQuery):
+    ...
+
+
+@app.post("/accounts")
+async def balance(data: AccountsRequest):
+    beak_bank: BeakBank = BeakBank().contextualise(data.user_id)
+    accounts = beak_bank.get_accounts()
+    beneficiaries = beak_bank.get_beneficiaries()
+    return {"content": {
+        "accounts": [acc.account_type for acc in accounts],
+        "beneficiaries": [ben.name for ben in beneficiaries]
+    }}
 
 class DepositRequest(BaseQuery):
     account_type: str
@@ -63,10 +88,13 @@ class WithdrawalRequest(BaseQuery):
 @app.post("/withdraw")
 async def withdraw(data: WithdrawalRequest):
     beak_bank: BeakBank = BeakBank().contextualise(data.user_id)
-    account, transaction = beak_bank.withdraw(data.account_type, data.amount)
-    return {
-        "new_balance": f"Reduced from {transaction.pre_balance} to {transaction.post_balance}"
-    }
+    try:
+        account, transaction = beak_bank.withdraw(data.account_type, data.amount)
+        return {
+            "new_balance": f"Reduced from {transaction.pre_balance} to {transaction.post_balance}"
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 
 class InternalTransferRequest(BaseQuery):
@@ -78,12 +106,14 @@ class InternalTransferRequest(BaseQuery):
 @app.post("/internal-transfer")
 async def internal_transfer(data: InternalTransferRequest):
     beak_bank: BeakBank = BeakBank().contextualise(data.user_id)
-    fr_acc, fr_tras, to_acc, to_trans = beak_bank.internal_transfer(data.from_account_type, data.to_account_type, data.amount)
-    return {
-        "from_account_balance": f"Reduced from {fr_tras.pre_balance} to {fr_tras.post_balance}",
-        "to_account_balance": f"Increased from {to_trans.pre_balance} to {to_trans.post_balance}",
-    }
-
+    try:
+        fr_acc, fr_tras, to_acc, to_trans = beak_bank.internal_transfer(data.from_account_type, data.to_account_type, data.amount)
+        return {
+            "from_account_balance": f"Reduced from {fr_tras.pre_balance} to {fr_tras.post_balance}",
+            "to_account_balance": f"Increased from {to_trans.pre_balance} to {to_trans.post_balance}",
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 class ExternalTransferRequest(BaseQuery):
     from_account_type: str
@@ -94,10 +124,13 @@ class ExternalTransferRequest(BaseQuery):
 @app.post("/external-transfer")
 async def external_transfer(data: ExternalTransferRequest):
     beak_bank: BeakBank = BeakBank().contextualise(data.user_id)
-    fr_acc, fr_tras, to_acc, to_trans = beak_bank.external_transfer(data.from_account_type, data.beneficiary, data.amount)
-    return {
-        "balance": f"Reduced from {fr_tras.pre_balance} to {fr_tras.post_balance}",
-    }
+    try:
+        fr_acc, fr_tras, to_acc, to_trans = beak_bank.external_transfer(data.from_account_type, data.beneficiary, data.amount)
+        return {
+            "balance": f"Reduced from {fr_tras.pre_balance} to {fr_tras.post_balance}",
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 
 class BankStatementRequest(BaseQuery):

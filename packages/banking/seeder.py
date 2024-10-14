@@ -8,17 +8,19 @@ from . import BeakBank
 fake = Faker()
 
 
-
 def get_user_context(user_id):
     bank = BeakBank().contextualise(user_id)
     user_accounts = bank.account_manager.get_all(user_id)
     beneficiaries = bank.beneficiary_manager.get_all(user_id)
-    return  f"""
-    1. User has {len(user_accounts)} accounts namely: {", ".join([acc.account_type for acc in user_accounts])}
-    2. User has {len(beneficiaries)} beneficiaries namely: {", ".join([b.name for b in beneficiaries])}
-    """
+    return {
+        "username": bank.user_manager.get_one(user_id).name,
+        "context": f"""
+        1. User has {len(user_accounts)} accounts namely: {", ".join([acc.account_type for acc in user_accounts])}
+        2. User has {len(beneficiaries)} beneficiaries namely: {", ".join([b.name for b in beneficiaries])}
+        """
+    }
 
-def seed_for_user(user_id: str, full_name: str) -> str:
+def seed_for_user(user_id: str, full_name: str | None = None) -> str:
     """Initialize accounts for a user."""
     bank = BeakBank().contextualise(user_id)
 

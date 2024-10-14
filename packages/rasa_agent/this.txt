@@ -1,0 +1,8 @@
+rasa run --enable-api --cors "*" --debug
+
+rasa train
+rasa inspect
+rasa shell
+
+
+loclx tunnel http --to :5005

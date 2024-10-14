@@ -10,7 +10,6 @@ from telegram.ext import (
 
 from .handlers import (
     command_start,
-    commdand_seed,
     commdand_help,
     comand_message
 )
@@ -18,7 +17,6 @@ from .handlers import (
 
 def register_handlers(app: Application) -> None:
     app.add_handler(CommandHandler("start", command_start))
-    app.add_handler(CommandHandler("seed", commdand_seed))
     app.add_handler(CommandHandler("help", commdand_help))
     app.add_handler(MessageHandler(filters.TEXT, comand_message))
 

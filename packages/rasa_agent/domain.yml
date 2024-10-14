@@ -1,0 +1,71 @@
+version: "3.1"
+
+actions:
+  - action_check_sufficient_funds
+  - action_verify_target_accounts
+  - action_check_balance
+
+slots:
+  source_account:
+    type: text
+    mappings:
+      - type: from_llm
+  recipient_account:
+    type: text
+    mappings:
+      - type: from_llm
+  amount:
+    type: float
+    mappings:
+      - type: from_llm
+  has_sufficient_funds:
+    type: bool
+    mappings:
+      - type: custom
+  final_confirmation:
+    type: bool
+    mappings:
+      - type: from_llm
+  correct_target_accounts:
+    type: bool
+    mappings:
+      - type: custom
+  account_names:
+    type: text
+    mappings:
+      - type: from_llm
+  accounts_balances:
+    type: text
+    mappings:
+      - type: custom
+
+responses:
+  utter_ask_source_account:
+    - text: "Which account would you like to send money from?"
+
+  utter_ask_recipient_account:
+    - text: "Where would you like to send money to?"
+
+  utter_ask_amount:
+    - text: "How much money would you like to send?"
+
+  utter_incorrect_target_accounts:
+    - text: "Wrong source and recipient accounts"
+
+  utter_ask_final_confirmation:
+    - text: "Please confirm: you want to transfer {amount} to {recipient}?"
+
+  utter_transfer_cancelled:
+    - text: "Your transfer has been cancelled."
+
+  utter_insufficient_funds:
+    - text: "You do not have enough funds to make this transaction."
+
+  utter_transfer_complete:
+    - text: "All done. {amount} has been sent to {recipient}."
+
+  utter_ask_account_names:
+    - text: "Which account(s) would you like to check the balance for?"
+
+  utter_balance_check_complete:
+    - text: "{accounts_balances}."

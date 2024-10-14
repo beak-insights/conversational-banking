@@ -7,7 +7,6 @@ from .transaction import TransactionManager
 from .user import UserManager
 from .utility import UtilityBillManager
 
-
 class BeakBank:
     """MyBeakBank class to manage all banking operations."""
     # user context
@@ -122,6 +121,12 @@ class BeakBank:
         
     def get_account_balance(self, account_type):
         return self.account_manager.get_account_balance(self.user_id, account_type)
+    
+    def get_accounts(self):
+        return self.account_manager.get_all(self.user_id)
+    
+    def get_beneficiaries(self):
+        return self.beneficiary_manager.get_all(self.user_id)
 
     def get_transaction_history(self, account_type, start_date, end_date):
         print(self.user_id, account_type, start_date, end_date)
