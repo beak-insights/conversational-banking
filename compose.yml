@@ -7,7 +7,7 @@ services:
       context: ./packages/ai-agent/
       dockerfile: Docker.assistant
     volumes:
-    - ./:/app
+    - ./packages/ai-agent:/usr/app/ai-agent
     environment:
       - BANK_API=http://cb-bank:8000
       - OPENAI_API_KEY=${OPENAI_API_KEY}

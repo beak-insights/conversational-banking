@@ -3,6 +3,7 @@ from typing import Optional
 
 from httpx import AsyncClient
 from langchain_core.tools import tool
+from .activity import tool_activity
 
 BANK_API = os.getenv('BANK_API')
 
@@ -18,7 +19,9 @@ async def bank_request(url, data):
             return {"error": f"An unexpected error occurred: {str(err)}"}
 
 
+
 @tool
+@tool_activity
 async def lc_balance(user_id: str, account_type: str) -> str:
     """Balance checking only - his tool does not support withdrawals, deposits, sending, transfers, or other transactions.
     "Use this function to get the current account balance from the bank account manager.
@@ -36,7 +39,9 @@ async def lc_balance(user_id: str, account_type: str) -> str:
     print("user_id", user_id, "account_type", account_type)
     return await bank_request("/balance", {"user_id": user_id, "account_type": account_type})
 
+
 @tool
+@tool_activity
 async def lc_deposit(user_id: str, account_type: str, amount: int) -> str:
     """Deposity only tool - Use this function to deposit money into an account. 
 
@@ -53,7 +58,9 @@ async def lc_deposit(user_id: str, account_type: str, amount: int) -> str:
         raise ValueError("User ID and account type and amount are all required")
     return await bank_request("/deposit", {"user_id": user_id, "account_type": account_type, "amount": amount})
 
+
 @tool
+@tool_activity
 async def lc_withdraw(user_id: str, account_type: str, amount: int) -> str:
     """Withdrawal only tool - Use this function to withdraw money from an account. 
 
@@ -70,7 +77,9 @@ async def lc_withdraw(user_id: str, account_type: str, amount: int) -> str:
         raise ValueError("User ID and account type and amount are all required")
     return await bank_request("/withdraw", {"user_id": user_id, "account_type": account_type, "amount": amount})
 
+
 @tool
+@tool_activity
 async def lc_internal_transfer(user_id: str, from_account_type: str, to_account_type: str, amount: int) -> str:
     """Internal (Transfer/sending) only tool - Use this function to transfer money between users own accounts only. 
 
@@ -95,6 +104,7 @@ async def lc_internal_transfer(user_id: str, from_account_type: str, to_account_
 
 
 @tool
+@tool_activity
 async def lc_external_transfer(user_id: str, from_account_type: str, beneficiary, amount: int) -> str:
     """External (Transfer/sending) only tool - Use this function to transfer money between users beneficiary or given account number. 
 
@@ -117,7 +127,9 @@ async def lc_external_transfer(user_id: str, from_account_type: str, beneficiary
         "amount": amount
     })
 
+
 @tool
+@tool_activity
 async def lc_statement(user_id: str, account_type: str, n_days_ago: Optional[int] = None, n_hours_ago: Optional[int] = None, start_date: Optional[str] = None, end_date: Optional[str] = None) -> str:
     """Use this function to get the bank statement to reflect user activity on their account.
 

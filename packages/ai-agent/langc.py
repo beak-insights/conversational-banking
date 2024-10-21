@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
 import logging
+
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -13,6 +14,7 @@ from .tools import (
     lc_balance, lc_withdraw, lc_external_transfer,
     lc_internal_transfer, lc_deposit, lc_statement, bank_request
 )
+from .activity import asking_activity
 from .prompts import BASE_SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
@@ -27,6 +29,7 @@ class BankAgent:
         self.full_name = None
         self.executor = None
 
+    @asking_activity
     async def aprompt(self, query: str) -> str:
         response = await self.executor.ainvoke(
             {"messages": [HumanMessage(content=query)]},
@@ -34,6 +37,7 @@ class BankAgent:
         )
         return response["messages"][-1].content
 
+    @asking_activity
     def prompt(self, query: str) -> str:
         response = self.executor.invoke(
             {"messages": [HumanMessage(content=query)]},

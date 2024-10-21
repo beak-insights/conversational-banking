@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Dasbhoard{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    <h1 class="mt-4 mb-1 text-2xl text-gray-600 uppercase">Dasbhoard</h1>
+    <hr >
+    <div class="my-4">
+        <p><span class="italic text-md text-gray-500">Total Users:</span> <span id="totalUsers"></span></p>
+    </div>  
+    <hr class="mb-4">  
+    <div class="grid grid-cols-3 gap-8">
+        <canvas id="activityBreakdown" class="col-span-1 max-w-[400px] max-h-[430px]"></canvas>
+        <canvas id="avgDurationByCategory" class="col-span-1 max-w-[400px] max-h-[430px]"></canvas>
+        <canvas id="topActivities" class="col-span-1 max-w-[400px] max-h-[430px]"></canvas>
+        <canvas id="trendsOverTime" class="col-span-3 max-w-full max-h-[430px]"></canvas>
+        <canvas id="twentyFourHour" class="col-span-3 max-w-full max-h-[430px]"></canvas>
+        <canvas id="weekDayTrends" class="col-span-3 max-w-full max-h-[430px]"></canvas>
+    </div>
+{% endblock %}
+
+{% block footer_script %}
+   <!-- Pass the activities variable from FastAPI into a JavaScript variable -->
+   <script type="text/javascript">
+     const activitiesDataset = {{ activities | tojson }};
+     console.log(activitiesDataset);
+   </script>
+   <!-- Load the Charts JS file -->
+   <script src="{{ url_for('static', path='/charts.js') }}"></script>
+{% endblock %}

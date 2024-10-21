@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <script src="{{ url_for('static', path='/tailwind.js') }}"></script>
+    <script src="{{ url_for('static', path='/chart.js') }}"></script>
+    <script src="{{ url_for('static', path='/chart-date-fn.js') }}"></script>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <title>{% block title %}{% endblock %} - BeakBank</title>
+    {% endblock %}
+</head>
+<body class="bg-gray-100 px-20 flex flex-col justify-between min-h-screen">
+    <div id="content" class="grow">{% block content %}{% endblock %}</div>
+    <div id="footer" >
+        {% block footer %}
+        &copy; Copyright 2024 by <a href="http://domain.invalid/">Aurthur Musendame</a>.
+        {% endblock %}
+    </div>
+    {% block footer_script %}
+    {% endblock %}
+</body>
+</html>
