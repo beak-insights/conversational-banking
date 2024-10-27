@@ -51,13 +51,13 @@ class BankAgent:
         self.executor = self._create_agent()
         return self
 
-    async def contextualise(self, user_id: str) -> 'BankAgent':
+    async def contextualise(self, user_id: str, full_name: str | None = "") -> 'BankAgent':
         self.user_id = user_id
-        resp = await bank_request("/context", {"user_id": user_id})
+        resp = await bank_request("/context", {"user_id": user_id, "full_name": full_name})
         data = resp.get("content", {})
-        self.full_name = data.get("username")
+        self.full_name = full_name if full_name else data.get("username")
         self.system_prompt = BASE_SYSTEM_PROMPT.format(
-            user_details=f"User ID: {user_id}, Full Name: {self.full_name}",
+            user_details=f"User ID: {self.user_id}, Full Name: {self.full_name}",
             extra_more=data.get("context")
         )
         return self

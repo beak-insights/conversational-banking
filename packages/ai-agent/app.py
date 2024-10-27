@@ -25,6 +25,7 @@ sessions: dict[str, BankAgent] = {}
 class UserQuery(BaseModel):
     user_id: str
     question: str
+    full_name: str | None = ""
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -1219,9 +1220,9 @@ async def read_item(request: Request):
 @app.post("/ask")
 async def ask_assistant(query: UserQuery):
     if query.user_id not in sessions:
-        logger.info(f"User does not exist in session:  contextualising ...")
+        logger.info(f"User does not exist in session:  contextualising {query.user_id}:{query.full_name} ...")
         with_context = await BankAgent().contextualise(
-            query.user_id
+            query.user_id, query.full_name
         )
         logger.info(f"Applying context ...")
         sessions[query.user_id] = with_context.init()

@@ -25,7 +25,7 @@ services:
       context: ./packages/banking/
       dockerfile: Docker.banking
     volumes:
-    - ./:/app
+    - ./packages/banking:/usr/app/banking
     ports:
       - 5001:8000
     extra_hosts:
@@ -40,7 +40,7 @@ services:
       context: ./packages/bot_tele/
       dockerfile: Docker.telegram
     volumes:
-    - ./:/app
+    - ./packages/bot_tele:/usr/app/bot_tele
     environment:
       - ASSISTANT_API=http://cb-assistant:8000
       - BANK_API=http://cb-bank:8000

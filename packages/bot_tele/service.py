@@ -12,11 +12,18 @@ ASSISTANT_API = os.getenv('ASSISTANT_API')
 print(BANK_API, ASSISTANT_API)
 
 async def assistant_post(url, user: User, question: str):
+    logger.info(f"user::{user}::")
+    _user = user.full_name if user.full_name else user.username
     async with AsyncClient(base_url=ASSISTANT_API, timeout=30.0) as client:
-        logger.info(f"bank_post: {client.base_url}{url}: question {question}")
+        logger.info(f"bank_post::{_user}::: {client.base_url}{url}: question {question}")
         try:
-            response = await client.post(url, json={
-                "user_id": str(user.id), "question": question}
+            response = await client.post(
+                url, 
+                json={
+                    "user_id": str(user.id), 
+                    "full_name": _user,
+                    "question": question
+                }
             )
             return response.json()
         except RequestError:

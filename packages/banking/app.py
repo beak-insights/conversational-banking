@@ -23,13 +23,13 @@ class BaseQuery(BaseModel):
     
     
 class ContextQuery(BaseQuery):
-    ...
+    full_name: Optional[str] = None
 
 
 @app.post("/context")
 def user_context(data: ContextQuery):
-    print(f"Requesting context for {data.user_id}")
-    ctx = seed_for_user(data.user_id)
+    print(f"Requesting context for {data.user_id}:{data.full_name}")
+    ctx = seed_for_user(data.user_id, data.full_name)
     print(f"Context for {data.user_id} is {ctx}")   
     return {"content":  ctx}
 
